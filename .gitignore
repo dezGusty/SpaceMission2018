@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+
+Binaries/*
+Content/*
+Intermediate/*
+Saved/*
+.vs/*
