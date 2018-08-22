@@ -6,6 +6,7 @@
 *.lo
 *.o
 *.obj
+*.bin
 
 # Precompiled Headers
 *.gch
@@ -34,5 +35,7 @@
 Binaries/*
 Content/*
 Intermediate/Build/*
+Intermediate/ProjectFiles/*.filters
+Intermediate/ProjectFiles/*.user
 Saved/*
 .vs/*
