@@ -33,6 +33,6 @@
 
 Binaries/*
 Content/*
-Intermediate/*
+Intermediate/Build/*
 Saved/*
 .vs/*
