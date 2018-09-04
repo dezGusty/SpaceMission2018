@@ -14,14 +14,16 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Sound/SoundBase.h"
 #include "iostream"
-#include <debug/DebugDrawService.h>
 
 
+//Movement
 const FName AMyProjectPawn::MoveForwardBinding("MoveForward");
 const FName AMyProjectPawn::MoveRightBinding("MoveRight");
-const FName AMyProjectPawn::FireForwardBinding("FireForward");
-const FName AMyProjectPawn::FireRightBinding("FireRight");
+
+//Firing
 const FName AMyProjectPawn::FirePlayerBulletBinding("FirePlayerBullet");
+const FName AMyProjectPawn::StopFireBulletBinding("StopFireBullet");
+
 FHitResult Result;
 AMyPlayerController* PC = nullptr;
 
@@ -42,7 +44,7 @@ AMyProjectPawn::AMyProjectPawn()
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
 	CameraBoom->bAbsoluteRotation = true; // Don't want arm to rotate when ship does
-	CameraBoom->TargetArmLength = 1200.f;
+	CameraBoom->TargetArmLength = 2000.f;
 	CameraBoom->RelativeRotation = FRotator(-80.f, 0.f, 0.f);
 	CameraBoom->bDoCollisionTest = false; // Don't want to pull camera in when it collides with level
 
@@ -54,9 +56,8 @@ AMyProjectPawn::AMyProjectPawn()
 	// Movement
 	MoveSpeed = 1000.0f;
 	// Weapon
-	GunOffset = FVector(90.f, 0.f, 0.f);
-	FireRate = 0.1f;
-	bCanFire = true;
+	FireRate = 0.15f;
+	
 }
 
 void AMyProjectPawn::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
@@ -66,8 +67,8 @@ void AMyProjectPawn::SetupPlayerInputComponent(class UInputComponent* PlayerInpu
 	// set up gameplay key bindings
 	PlayerInputComponent->BindAxis(MoveForwardBinding);
 	PlayerInputComponent->BindAxis(MoveRightBinding);
-	PlayerInputComponent->BindAxis(FireForwardBinding);
-	PlayerInputComponent->BindAxis(FireRightBinding);
+	PlayerInputComponent->BindAction("FirePlayerBullet", IE_Pressed, this, &AMyProjectPawn::FireBullet);
+	PlayerInputComponent->BindAction("StopFireBullet", IE_Released, this, &AMyProjectPawn::StopFireBullet);
 }
 
 void AMyProjectPawn::Tick(float DeltaSeconds)
@@ -105,13 +106,7 @@ void AMyProjectPawn::Tick(float DeltaSeconds)
 	else
 		UE_LOG(LogTemp, Error, TEXT("Error Getting hit result") );
 
-	InputComponent = PC->GetPawn()->FindComponentByClass<UInputComponent>();
-	InputComponent->BindAction("FirePlayerBullet", IE_Pressed, this, &AMyProjectPawn::FireBullet);
-	
-	
-
-
-	
+			
 	//if(PC->DeprojectMousePositionToWorld(WorldLocation, WorldDirection))
 	//PC->GetPawn()->SetActorRotation(FRotator(0, UKismetMathLibrary::FindLookAtRotation(this->GetActorLocation(), WorldLocation).Yaw, 0));
 	//else
@@ -120,62 +115,54 @@ void AMyProjectPawn::Tick(float DeltaSeconds)
 
 	
 }
-
-
-
-void AMyProjectPawn::FireBullet( )
+void AMyProjectPawn::StopFireBullet()
 {
-	// If we it's ok to fire again
-	if (bCanFire == true)
-	{
-		
-		FVector PlayerLocation = PC->GetPawn()->GetActorLocation();
-		FRotator PlayerRotation = PC->GetPawn()->GetActorRotation();
-		FActorSpawnParameters SpawnParams;
-		SpawnParams.Owner = this;
-		SpawnParams.Instigator = Instigator;
-						
-		// Spawn projectile at an offset from this pawn
-		const FVector SpawnLocation = PlayerLocation + UKismetMathLibrary::GetForwardVector(PlayerRotation) *120.f;
-		FTransform BulletTransfom = FTransform(PlayerRotation, SpawnLocation, FVector::ZeroVector);
-		
+	GetWorldTimerManager().ClearTimer(MyTimerHandle);
+}
 
-		UWorld* const World = GetWorld();
-		if (World != NULL)
-		{	
 
-			// spawn the projectile
-			AMyProjectProjectile* NewProjectile = World->
-					SpawnActor<AMyProjectProjectile>(AMyProjectProjectile::StaticClass(),BulletTransfom, SpawnParams);
-			NewProjectile->SetActorScale3D(FVector(1.5f,1.5f,1.5f));
-		}
+//Spawn bullets
+void AMyProjectPawn::CreateFireBullet()
+{
+	FVector PlayerLocation = PC->GetPawn()->GetActorLocation();
+	FRotator PlayerRotation = PC->GetPawn()->GetActorRotation();
 
-		bCanFire = false;
-		World->GetTimerManager().SetTimer(TimerHandle_ShotTimerExpired, this, &AMyProjectPawn::ShotTimerExpired, FireRate);
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = this;
+	SpawnParams.Instigator = Instigator;
 
-		// try and play the sound if specified
-		if (FireSound != nullptr)
-		{
-			UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
-		}
-
-		bCanFire = false;
+	// Spawn projectile at an offset from this pawn
+	const FVector SpawnLocation = PlayerLocation + UKismetMathLibrary::GetForwardVector(PlayerRotation) *100.f;
+	FTransform BulletTransfom = FTransform(PlayerRotation, SpawnLocation, FVector::ZeroVector);
 	
-
+	UWorld* const World = GetWorld();
+	if (World != NULL)
+	{
+		// spawn the projectile
+		AMyProjectProjectile* NewProjectile = World->
+			SpawnActor<AMyProjectProjectile>(AMyProjectProjectile::StaticClass(), BulletTransfom, SpawnParams);
+		NewProjectile->SetActorScale3D(FVector(1.5f, 1.5f, 1.5f));
 	}
 
-	
+	// try and play the sound if specified
+	if (FireSound != nullptr)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
+	}
 }
 
-void AMyProjectPawn::ShotTimerExpired()
+//Fire Bullets while LMButton is pressed
+void AMyProjectPawn::FireBullet()
 {
-	bCanFire = true;
+	GetWorldTimerManager().SetTimer(MyTimerHandle, this, &AMyProjectPawn::CreateFireBullet, FireRate, true);
 }
+
+
 
 void AMyProjectPawn::BeginPlay()
 {
 	Super::BeginPlay();
-	PC = Cast<AMyPlayerController>(GetController());
+	PC = Cast<AMyPlayerController>(GetWorld()->GetFirstPlayerController());
 	if (PC)
 	{
 		PC->bShowMouseCursor = true;
@@ -183,6 +170,5 @@ void AMyProjectPawn::BeginPlay()
 		PC->bEnableMouseOverEvents = true;
 		PC->CurrentMouseCursor = EMouseCursor::Crosshairs;
 	}
-
 
 }

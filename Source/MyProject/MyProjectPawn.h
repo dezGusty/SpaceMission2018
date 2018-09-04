@@ -30,12 +30,7 @@ class AMyProjectPawn : public APawn
 
 public:
 	AMyProjectPawn();
-
-
-	/** Offset from the ships location to spawn projectiles */
-	UPROPERTY(Category = Gameplay, EditAnywhere, BlueprintReadWrite )
-	FVector GunOffset;
-	
+		
 	/* How fast the weapon will fire */
 	UPROPERTY(Category = Gameplay, EditAnywhere, BlueprintReadWrite)
 	float FireRate;
@@ -57,24 +52,28 @@ public:
 	UFUNCTION()
 	void FireBullet();
 
-	/* Handler for the fire timer expiry */
-	void ShotTimerExpired();
+	/*Stop Firing on realease*/
+	UFUNCTION()
+	void StopFireBullet();
 
-	// Static names for axis bindings
+	//Create a bullet at a specified location
+	UFUNCTION()
+	void CreateFireBullet();
+
+
+	// Static names for axis and actions bindings
 	static const FName MoveForwardBinding;
 	static const FName MoveRightBinding;
-	static const FName FireForwardBinding;
-	static const FName FireRightBinding;
 	static const FName FirePlayerBulletBinding;
+	static const FName StopFireBulletBinding;
+
 
 private:
 	UInputComponent* InputComponent = nullptr;
 
-	/* Flag to control firing  */
-	uint32 bCanFire : 1;
+	//Timer handle for automatically firing
+	FTimerHandle MyTimerHandle;
 
-	/** Handle for efficient management of ShotTimerExpired timer */
-	FTimerHandle TimerHandle_ShotTimerExpired;
 
 public:
 	/** Returns ShipMeshComponent subobject **/
