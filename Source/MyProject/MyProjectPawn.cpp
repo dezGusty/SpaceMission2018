@@ -127,22 +127,44 @@ void AMyProjectPawn::CreateFireBullet()
 	FVector PlayerLocation = PC->GetPawn()->GetActorLocation();
 	FRotator PlayerRotation = PC->GetPawn()->GetActorRotation();
 
+
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Owner = this;
 	SpawnParams.Instigator = Instigator;
 
 	// Spawn projectile at an offset from this pawn
 	const FVector SpawnLocation = PlayerLocation + UKismetMathLibrary::GetForwardVector(PlayerRotation) *100.f;
-	FTransform BulletTransfom = FTransform(PlayerRotation, SpawnLocation, FVector::ZeroVector);
+
+	//////////////////////////////////////////
+	///////////////	TODO   //////////////////
+	// De refactorizat spwanarea gloantelor multiple
 	
+	FTransform BulletTransfom = FTransform(PlayerRotation, SpawnLocation, FVector::ZeroVector);
+
+	PlayerRotation.Yaw += 2.f;
+	FTransform BulletTransfom2 = FTransform(PlayerRotation, SpawnLocation + UKismetMathLibrary::GetRightVector(PlayerRotation) * 50.f, FVector::ZeroVector);
+	PlayerRotation.Yaw -= 4.f;
+	FTransform BulletTransfom3 = FTransform(PlayerRotation, SpawnLocation + UKismetMathLibrary::GetRightVector(PlayerRotation) * (-50.f), FVector::ZeroVector);
+
 	UWorld* const World = GetWorld();
 	if (World != NULL)
 	{
+		
 		// spawn the projectile
 		AMyProjectProjectile* NewProjectile = World->
 			SpawnActor<AMyProjectProjectile>(AMyProjectProjectile::StaticClass(), BulletTransfom, SpawnParams);
+		AMyProjectProjectile* NewProjectile1 = World->
+			SpawnActor<AMyProjectProjectile>(AMyProjectProjectile::StaticClass(), BulletTransfom2, SpawnParams);
+		AMyProjectProjectile* NewProjectile2 = World->
+			SpawnActor<AMyProjectProjectile>(AMyProjectProjectile::StaticClass(), BulletTransfom3, SpawnParams);
+
 		NewProjectile->SetActorScale3D(FVector(1.5f, 1.5f, 1.5f));
+		NewProjectile1->SetActorScale3D(FVector(1.5f, 1.5f, 1.5f));
+		NewProjectile2->SetActorScale3D(FVector(1.5f, 1.5f, 1.5f));
 	}
+
+	//////////////////////////////////////////////////////
+	////////////// END  TODO /////////////////////////////
 
 	// try and play the sound if specified
 	if (FireSound != nullptr)
