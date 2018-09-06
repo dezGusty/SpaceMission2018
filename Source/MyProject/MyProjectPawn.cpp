@@ -126,8 +126,7 @@ void AMyProjectPawn::CreateFireBullet()
 {
 	FVector PlayerLocation = PC->GetPawn()->GetActorLocation();
 	FRotator PlayerRotation = PC->GetPawn()->GetActorRotation();
-
-
+	FVector ProjectileScale = FVector(1.5f, 1.5f, 1.5f);
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Owner = this;
 	SpawnParams.Instigator = Instigator;
@@ -135,44 +134,47 @@ void AMyProjectPawn::CreateFireBullet()
 	// Spawn projectile at an offset from this pawn
 	const FVector SpawnLocation = PlayerLocation + UKismetMathLibrary::GetForwardVector(PlayerRotation) *100.f;
 
-	//////////////////////////////////////////
-	///////////////	TODO   //////////////////
-	// De refactorizat spwanarea gloantelor multiple
-	float offSetToRightFire[] = {25,-25,50,0,-50,50,25,-25,-50,50,25,0,-25,50};
-	float offSetYawFire[] ={ 2,-2,};
-	int NoOfBullets = 3;
-	for (int i = 0; i < NoOfBullets; i++)
+
+	// This number must be obtained from the game instance
+	int noOfBullets = 5;
+
+
+	float* offSetToRightFire =  new float[noOfBullets]();
+
+	switch (noOfBullets)
 	{
-
-
+	case 1: offSetToRightFire[0] = 0.f;
+			break;
+	case 2: offSetToRightFire[0] = -50.f;
+			offSetToRightFire[1] = 50.f;
+			break;
+	case 3:	offSetToRightFire[0] = -50.f;
+			offSetToRightFire[1] = 0.f;
+			offSetToRightFire[2] = 50.f;
+			break;
+	case 4: offSetToRightFire[0] = -100.f;
+			offSetToRightFire[1] = -50.f;
+			offSetToRightFire[2] = 50.f;
+			offSetToRightFire[3] = 100.f;
+			break;
+	case 5: offSetToRightFire[0] = -100.f;
+			offSetToRightFire[1] = -50.f;
+			offSetToRightFire[2] = 0.f;
+			offSetToRightFire[3] = 50.f;
+			offSetToRightFire[4] = 100.f;
+			break;
+	default:
+		break;
 	}
-
-	PlayerRotation.Yaw += 2.f;
-	FTransform BulletTransfom = FTransform(PlayerRotation, SpawnLocation, FVector::ZeroVector);
-	PlayerRotation.Yaw += 2.f;
-	FTransform BulletTransfom2 = FTransform(PlayerRotation, SpawnLocation + UKismetMathLibrary::GetRightVector(PlayerRotation) * 50.f, FVector::ZeroVector);
-	PlayerRotation.Yaw -= 4.f;
-	FTransform BulletTransfom3 = FTransform(PlayerRotation, SpawnLocation + UKismetMathLibrary::GetRightVector(PlayerRotation) * (-50.f), FVector::ZeroVector);
-
-	UWorld* const World = GetWorld();
-	if (World != NULL)
-	{
+	for (int i = 0; i < noOfBullets; i++)
+	{	
+		FTransform BulletTransfom = FTransform(PlayerRotation, SpawnLocation + UKismetMathLibrary::GetRightVector(PlayerRotation) *offSetToRightFire[i], ProjectileScale);
+		GetWorld()->SpawnActor<AMyProjectProjectile>(AMyProjectProjectile::StaticClass(), BulletTransfom, SpawnParams);
+		PlayerRotation.Yaw += 2;
 		
-		// spawn the projectile
-		AMyProjectProjectile* NewProjectile = World->
-			SpawnActor<AMyProjectProjectile>(AMyProjectProjectile::StaticClass(), BulletTransfom, SpawnParams);
-		AMyProjectProjectile* NewProjectile1 = World->
-			SpawnActor<AMyProjectProjectile>(AMyProjectProjectile::StaticClass(), BulletTransfom2, SpawnParams);
-		AMyProjectProjectile* NewProjectile2 = World->
-			SpawnActor<AMyProjectProjectile>(AMyProjectProjectile::StaticClass(), BulletTransfom3, SpawnParams);
-
-		NewProjectile->SetActorScale3D(FVector(1.5f, 1.5f, 1.5f));
-		NewProjectile1->SetActorScale3D(FVector(1.5f, 1.5f, 1.5f));
-		NewProjectile2->SetActorScale3D(FVector(1.5f, 1.5f, 1.5f));
 	}
 
-	//////////////////////////////////////////////////////
-	////////////// END  TODO /////////////////////////////
+
 
 	// try and play the sound if specified
 	if (FireSound != nullptr)
