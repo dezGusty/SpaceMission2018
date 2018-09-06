@@ -138,9 +138,17 @@ void AMyProjectPawn::CreateFireBullet()
 	//////////////////////////////////////////
 	///////////////	TODO   //////////////////
 	// De refactorizat spwanarea gloantelor multiple
-	
-	FTransform BulletTransfom = FTransform(PlayerRotation, SpawnLocation, FVector::ZeroVector);
+	float offSetToRightFire[] = {25,-25,50,0,-50,50,25,-25,-50,50,25,0,-25,50};
+	float offSetYawFire[] ={ 2,-2,};
+	int NoOfBullets = 3;
+	for (int i = 0; i < NoOfBullets; i++)
+	{
 
+
+	}
+
+	PlayerRotation.Yaw += 2.f;
+	FTransform BulletTransfom = FTransform(PlayerRotation, SpawnLocation, FVector::ZeroVector);
 	PlayerRotation.Yaw += 2.f;
 	FTransform BulletTransfom2 = FTransform(PlayerRotation, SpawnLocation + UKismetMathLibrary::GetRightVector(PlayerRotation) * 50.f, FVector::ZeroVector);
 	PlayerRotation.Yaw -= 4.f;
