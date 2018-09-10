@@ -8,7 +8,8 @@
 #include "Runtime/Engine/Classes/GameFramework/Actor.h"
 #include "UObject/ConstructorHelpers.h"
 
-
+AMyEnemyAIController* EPC = nullptr;
+AMyEnemyAIController* EPCC = nullptr;
 // Sets default values
 AEnemyCharacter::AEnemyCharacter()
 {
@@ -26,6 +27,8 @@ AEnemyCharacter::AEnemyCharacter()
 void AEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	EPCC = Cast<AMyEnemyAIController>(this->GetController());
+	EPC = Cast<AMyEnemyAIController>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 	
 }
 
@@ -36,16 +39,14 @@ void AEnemyCharacter::Tick(float DeltaTime)
 
 	//Get player location
 	FVector ShipLocation = GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation();
+	////Set enemy location to player location
+	//--cu asta se misca suprapus cu nava noastra
+	//SetActorLocation(ShipLocation);
 
+	//aici am incercat sa folosesc functia asta din AI, dar da crash programul-- de studiat daca se ia bine actorul care trebuie urmarit si daca controller-ul AI ia ce trebuie
+	EPCC->MoveToActor(GetWorld()->GetFirstPlayerController()->GetPawn());
+	//EPC->MoveToLocation(ShipLocation);
 
-	/*ACharacter* myCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
-	FVector EnemyLocation = this->GetActorLocation();
-	FVector MovementVector = ShipLocation - EnemyLocation;
-	myCharacter->AddActorWorldOffset(FVector(100.0f, 100.0f, 100.0f));
-	*/
-	
-	// Set enemy location to player location
-	SetActorLocation(ShipLocation);
 
 }
 
