@@ -171,7 +171,7 @@ void AMyProjectPawn::CreateFireBullet()
 		FTransform BulletTransfom = FTransform(PlayerRotation, SpawnLocation + UKismetMathLibrary::GetRightVector(PlayerRotation) *offSetToRightFire[i], ProjectileScale);
 		GetWorld()->SpawnActor<AMyProjectProjectile>(AMyProjectProjectile::StaticClass(), BulletTransfom, SpawnParams);
 		PlayerRotation.Yaw += 2;
-		
+	
 	}
 
 

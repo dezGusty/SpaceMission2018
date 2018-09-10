@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+
 #include "MyProjectProjectile.generated.h"
 
 class UProjectileMovementComponent;
@@ -13,6 +14,9 @@ UCLASS(config=Game)
 class AMyProjectProjectile : public AActor
 {
 	GENERATED_BODY()
+
+	UPROPERTY(VisibleAnywhere)
+	class UParticleSystemComponent* PSC;
 
 	/** Sphere collision component */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Projectile, meta = (AllowPrivateAccess = "true"))
