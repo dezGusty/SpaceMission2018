@@ -5,12 +5,17 @@
 #include "UObject/ConstructorHelpers.h"
 #include "Components/StaticMeshComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "Runtime/Engine/Classes/Particles/ParticleSystemComponent.h"
+#include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "Engine/StaticMesh.h"
 
 AMyProjectProjectile::AMyProjectProjectile() 
 {
 	// Static reference to the mesh to use for the projectile
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> ProjectileMeshAsset(TEXT("/Game/TwinStick/Meshes/TwinStickProjectile.TwinStickProjectile"));
+
+
+	
 	
 	// Create mesh component for the projectile sphere
 	ProjectileMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ProjectileMesh0"));
@@ -20,6 +25,14 @@ AMyProjectProjectile::AMyProjectProjectile()
 	ProjectileMesh->OnComponentHit.AddDynamic(this, &AMyProjectProjectile::OnHit); // set up a notification for when this component hits something
 	ProjectileMesh->RelativeScale3D;
 	RootComponent = ProjectileMesh;
+
+	//Construct ParticleSystem to spawn on projectile hit
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> PS(TEXT("ParticleSystem'/Game/TwinStick/ProjectileSparks.ProjectileSparks'"));
+	PSC = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("MyPSC"));
+	PSC->SetTemplate(PS.Object);
+	PSC->ToggleActive();
+
+	
 
 	// Use a ProjectileMovementComponent to govern this projectile's movement
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement0"));
@@ -40,7 +53,10 @@ void AMyProjectProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActo
 	if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && OtherComp->IsSimulatingPhysics())
 	{
 		OtherComp->AddImpulseAtLocation(GetVelocity() * 20.0f, GetActorLocation());
+	
 	}
-
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), PSC->Template, FTransform( Hit.Location), true);
 	Destroy();
+	
+
 }
