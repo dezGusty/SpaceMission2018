@@ -1,7 +1,8 @@
 // Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
 
 #include "MyProjectPawn.h"
-
+#include "MyPlayerController.h"
+#include "MyProjectProjectile.h"
 #include "EnemyCharacter.h"
 
 

@@ -3,8 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "MyPlayerController.h"
-#include "MyProjectProjectile.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/Pawn.h"
 #include "TimerManager.h"
