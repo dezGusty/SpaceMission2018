@@ -31,13 +31,17 @@ void AEnemySpawner::SpawnEnemy()
 {
 	TArray<AActor*> AllOutActors;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemyCharacter::StaticClass(), AllOutActors);
+	UE_LOG(LogTemp, Warning, TEXT("Spawning Now!"));
 	if (AllOutActors.Num() < this->MaxEnemies) {
-	FVector NewLocation = GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation() + FVector(100.f, 100.f, 0.f);
-			UKismetMathLibrary::RandomPointInBoundingBox(this->SpawnVolume->GetComponentLocation(), this->SpawnVolume->GetScaledBoxExtent());
-		AEnemyCharacter * NewEnemy = GetWorld()->SpawnActor <AEnemyCharacter>(NewLocation, FRotator::ZeroRotator);
+
+		FVector NewLocation = GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation() + FVector(100.f, 100.f, 0.f);
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.Name = "Ghita";
+		//UKismetMathLibrary::RandomPointInBoundingBox(this->SpawnVolume->GetComponentLocation(), this->SpawnVolume->GetScaledBoxExtent());
+		AEnemyCharacter * NewEnemy = GetWorld()->SpawnActor <AEnemyCharacter>(NewLocation, FRotator::ZeroRotator, SpawnParams);
 		
 		NewEnemy->SpawnDefaultController();
 
-		UE_LOG(LogTemp, Warning, TEXT("Spawning Now!"));
+		
 	}
 }

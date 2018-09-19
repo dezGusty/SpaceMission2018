@@ -18,8 +18,12 @@ AMyProjectGameMode::AMyProjectGameMode()
 
 void AMyProjectGameMode::BeginPlay()
 {
+	Super::BeginPlay();
 	TArray<AActor*> AllOutActors;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemySpawner::StaticClass(), AllOutActors);
+
+	UE_LOG(LogTemp, Warning, TEXT("Begining play %d"), AllOutActors.Num());
+
 	if (AllOutActors.Num() > 0) {
 		this->Spawner = Cast<AEnemySpawner>(AllOutActors[0]);
 	}
