@@ -1,19 +1,9 @@
 // Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
 
 #include "MyProjectPawn.h"
-#include "MyProjectProjectile.h"
-#include "TimerManager.h"
-#include "UObject/ConstructorHelpers.h"
-#include "Camera/CameraComponent.h"
-#include "Components/StaticMeshComponent.h"
-#include "Components/InputComponent.h"
-#include "GameFramework/SpringArmComponent.h"
-#include "Engine/CollisionProfile.h"
-#include "Engine/StaticMesh.h"
-#include "Kismet/GameplayStatics.h"
-#include "Kismet/KismetMathLibrary.h"
-#include "Sound/SoundBase.h"
-#include "iostream"
+
+#include "EnemyCharacter.h"
+
 
 
 //Movement
@@ -73,6 +63,7 @@ void AMyProjectPawn::SetupPlayerInputComponent(class UInputComponent* PlayerInpu
 
 void AMyProjectPawn::Tick(float DeltaSeconds)
 {
+
 	// Find movement direction
 	const float ForwardValue = GetInputAxisValue(MoveForwardBinding);
 	const float RightValue = GetInputAxisValue(MoveRightBinding);
@@ -111,14 +102,15 @@ void AMyProjectPawn::Tick(float DeltaSeconds)
 	//PC->GetPawn()->SetActorRotation(FRotator(0, UKismetMathLibrary::FindLookAtRotation(this->GetActorLocation(), WorldLocation).Yaw, 0));
 	//else
 	//	UE_LOG(LogTemp, Error, TEXT("Error Getting hit result %s"), *FRotator(0, UKismetMathLibrary::FindLookAtRotation(this->GetActorLocation(), WorldLocation).Yaw, 0).ToString());
-
-
 	
 }
+
+
 void AMyProjectPawn::StopFireBullet()
 {
 	GetWorldTimerManager().ClearTimer(MyTimerHandle);
 }
+
 
 
 //Spawn bullets
@@ -194,6 +186,8 @@ void AMyProjectPawn::FireBullet()
 void AMyProjectPawn::BeginPlay()
 {
 	Super::BeginPlay();
+	
+
 	PC = Cast<AMyPlayerController>(GetWorld()->GetFirstPlayerController());
 	if (PC)
 	{

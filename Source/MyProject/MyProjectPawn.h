@@ -7,12 +7,28 @@
 #include "MyProjectProjectile.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/Pawn.h"
+#include "TimerManager.h"
+#include "UObject/ConstructorHelpers.h"
+#include "Camera/CameraComponent.h"
+#include "Components/StaticMeshComponent.h"
+#include "Components/InputComponent.h"
+#include "GameFramework/SpringArmComponent.h"
+#include "Engine/CollisionProfile.h"
+#include "Engine/StaticMesh.h"
+#include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "Sound/SoundBase.h"
+#include <iostream>
 #include "MyProjectPawn.generated.h"
 
 UCLASS(Blueprintable)
 class AMyProjectPawn : public APawn
 {
 	GENERATED_BODY()
+
+		AMyProjectPawn();
+
+public:
 
 	/* The mesh component */
 	UPROPERTY(Category = Mesh, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
@@ -27,9 +43,6 @@ class AMyProjectPawn : public APawn
 	class USpringArmComponent* CameraBoom;
 
 
-
-public:
-	AMyProjectPawn();
 		
 	/* How fast the weapon will fire */
 	UPROPERTY(Category = Gameplay, EditAnywhere, BlueprintReadWrite)
@@ -59,7 +72,6 @@ public:
 	//Create a bullet at a specified location
 	UFUNCTION()
 	void CreateFireBullet();
-
 
 	// Static names for axis and actions bindings
 	static const FName MoveForwardBinding;

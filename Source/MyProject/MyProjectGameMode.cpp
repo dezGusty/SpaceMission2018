@@ -3,14 +3,30 @@
 #include "MyProjectGameMode.h"
 #include <MyProject.h>
 #include "MyProjectPawn.h"
+#include "EnemyCharacter.h"
 
 AMyProjectGameMode::AMyProjectGameMode()
-	:
-	AGameModeBase()
+	
 {
 	// set default pawn class to our character class
 	DefaultPawnClass = AMyProjectPawn::StaticClass();
-	PlayerControllerClass = AMyPlayerController::StaticClass();
+	this->EnemiesPerSecond = 2;
+	
+	//PlayerControllerClass = AMyPlayerController::StaticClass();
 	
 }
 
+void AMyProjectGameMode::BeginPlay()
+{
+	TArray<AActor*> AllOutActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemySpawner::StaticClass(), AllOutActors);
+	if (AllOutActors.Num() > 0) {
+		this->Spawner = Cast<AEnemySpawner>(AllOutActors[0]);
+	}
+
+	if (this->Spawner) {
+		FTimerHandle SpawnTimerHandler;
+		GetWorldTimerManager().SetTimer(SpawnTimerHandler, this->Spawner, &AEnemySpawner::SpawnEnemy, 1.0f / this->EnemiesPerSecond, true);
+	}
+
+}
