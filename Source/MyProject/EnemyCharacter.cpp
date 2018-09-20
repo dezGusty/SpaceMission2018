@@ -23,15 +23,19 @@ AEnemyCharacter::AEnemyCharacter()
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> EnemyMesh(TEXT("/Game/TwinStick/Meshes/Enemy_Mesh.Enemy_Mesh"));
 	
 	EnemyMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("EnemyMesh"));
+
 	EnemyMeshComponent->SetStaticMesh(EnemyMesh.Object);
 	EnemyMeshComponent->SetCollisionProfileName(UCollisionProfile::Pawn_ProfileName);
 	
-	EnemyMeshComponent->SetRelativeLocation(FVector(0.0f, 0.0f, 0.0f));
+	EnemyMeshComponent->SetRelativeLocation(FVector(0.0f, 0.0f, 0.f));
 	EnemyMeshComponent->SetRelativeRotation(FRotator(0.f, 0.0f, 0.0f));
+
 	UCapsuleComponent* EnemyCapsuleComponent = this->GetCapsuleComponent();
 	
 	
-	this->EnemyMeshComponent->AttachTo(GetRootComponent());
+	
+	
+	
 	RootComponent = EnemyMeshComponent;
 
 	this->AIControllerClass = AMyEnemyAIController::StaticClass();

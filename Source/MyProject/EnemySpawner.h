@@ -38,4 +38,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Enemy Spawner")
 	void SpawnEnemy();
 	
+
+
 };

@@ -51,15 +51,17 @@ void AEnemySpawner::SpawnEnemy()
 		if (AllOutActors.Num() < this->MaxEnemies)
 		{
 			FVector NewLocation =
-				GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation() +
+				//GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation() +
 				UKismetMathLibrary::RandomPointInBoundingBox(this->SpawnVolume->GetComponentLocation(), this->SpawnVolume->GetScaledBoxExtent());
 
 			//FVector(100.f, 100.f, 0.f);
 			FActorSpawnParameters SpawnParams;
-			SpawnParams.Name = "Ghita";
-			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+			//SpawnParams.Name = "Ghita";
+			
+			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-			AEnemyCharacter * NewEnemy = GetWorld()->SpawnActor <AEnemyCharacter>(NewLocation, FRotator::ZeroRotator, SpawnParams);
+			AEnemyCharacter* NewEnemy = GetWorld()->SpawnActor <AEnemyCharacter>(NewLocation, FRotator::ZeroRotator, SpawnParams);
+	
 			NewEnemy->SpawnDefaultController();
 		
 		} 

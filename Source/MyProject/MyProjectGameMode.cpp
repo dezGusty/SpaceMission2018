@@ -33,6 +33,7 @@ void AMyProjectGameMode::BeginPlay()
 	UE_LOG(LogTemp, Warning, TEXT(" Before Spawner created "));
 
 	if ((this->Spawner)!=nullptr) {
+
 		UE_LOG(LogTemp, Warning, TEXT(" Spawner created "));
 		float fRate = 1;
 		if (this->EnemiesPerSecond != 0) {
