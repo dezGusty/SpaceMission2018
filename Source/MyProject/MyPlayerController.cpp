@@ -7,10 +7,11 @@ AMyPlayerController::AMyPlayerController()
 	:
 	APlayerController()
 {
-	 
+
 }
 void AMyPlayerController::BeginPlay()
 {
+	UE_LOG(LogTemp, Warning, TEXT("MyPlayerController BeginPlay"));
 	Super::BeginPlay();
 
 

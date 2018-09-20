@@ -28,6 +28,8 @@ class AMyProjectPawn : public APawn
 
 public:
 
+
+
 	/* The mesh component */
 	UPROPERTY(Category = Mesh, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* ShipMeshComponent;

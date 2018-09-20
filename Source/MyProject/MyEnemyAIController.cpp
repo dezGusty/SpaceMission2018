@@ -18,6 +18,7 @@ void AMyEnemyAIController::BeginPlay()
 
 	FTimerHandle handler;
 	GetWorldTimerManager().SetTimer(handler, this, &AMyEnemyAIController::TrackPlayer, 1.0f, true, 0.0f);
+	UE_LOG(LogTemp, Warning, TEXT("AI Controller BeginPlay"));
 }
 
 void AMyEnemyAIController::TrackPlayer()
@@ -26,6 +27,7 @@ void AMyEnemyAIController::TrackPlayer()
 	if (PC) {
 		this->MoveToActor(PC->GetPawn(), 5);
 	}
+	UE_LOG(LogTemp, Warning, TEXT("Ai Controler trackplayer"));
 }
 
 

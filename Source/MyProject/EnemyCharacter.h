@@ -8,7 +8,7 @@
 #include "MyProjectPawn.h"
 #include "EnemyCharacter.generated.h"
 
-UCLASS()
+UCLASS(config=game)
 class MYPROJECT_API AEnemyCharacter : public ACharacter
 {
 	GENERATED_BODY()
