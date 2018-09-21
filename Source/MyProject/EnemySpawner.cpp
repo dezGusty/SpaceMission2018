@@ -2,7 +2,6 @@
 
 #include "EnemySpawner.h"
 #include "MyEnemyAIController.h"
-#include "GameFramework/CharacterMovementComponent.h"
 
 
 // Sets default values
@@ -42,43 +41,31 @@ void AEnemySpawner::Tick(float DeltaSeconds)
 void AEnemySpawner::SpawnEnemy()
 
 {
-	
+	UE_LOG(LogTemp, Warning, TEXT("EnemySpawner Spawn Enemy function"));
 	TArray<AActor*> AllOutActors;
 	
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemyCharacter::StaticClass(), AllOutActors);
-	
+	UE_LOG(LogTemp, Warning, TEXT("Spawning Now!"));
 
 	
-	if (AllOutActors.Num() < this->MaxEnemies)
-	{
-		FVector NewLocation =
-			//GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation() +
-			UKismetMathLibrary::RandomPointInBoundingBox(this->SpawnVolume->GetComponentLocation(), this->SpawnVolume->GetScaledBoxExtent());
+		if (AllOutActors.Num() < this->MaxEnemies)
+		{
+			FVector NewLocation =
+				//GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation() +
+				UKismetMathLibrary::RandomPointInBoundingBox(this->SpawnVolume->GetComponentLocation(), this->SpawnVolume->GetScaledBoxExtent());
 
-		//FVector(100.f, 100.f, 0.f);
-		FActorSpawnParameters SpawnParams;
-		//SpawnParams.Name = "Ghita";
+			//FVector(100.f, 100.f, 0.f);
+			FActorSpawnParameters SpawnParams;
+			//SpawnParams.Name = "Ghita";
+			
+			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-
-		AEnemyCharacter* NewEnemy = GetWorld()->SpawnActor <AEnemyCharacter>(NewLocation, FRotator::ZeroRotator, SpawnParams);
-
-		NewEnemy->SpawnDefaultController();
+			AEnemyCharacter* NewEnemy = GetWorld()->SpawnActor <AEnemyCharacter>(NewLocation, FRotator::ZeroRotator, SpawnParams);
+	
+			NewEnemy->SpawnDefaultController();
+			NewEnemy->Tags.Add(FName("Radar"));
 		
-		NewEnemy->FireBullet();
-		UCharacterMovementComponent* EMC = NewEnemy->GetCharacterMovement();
-		EMC->SetMovementMode(EMovementMode::MOVE_Flying);
-		EMC = NewEnemy->GetCharacterMovement();
-		EMC->AddInputVector(GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation());
-	if (EMC->IsFlying())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Is Flying"));
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("NOT Flying"));
-	}
-	}
+		} 
 		
 	
 }
