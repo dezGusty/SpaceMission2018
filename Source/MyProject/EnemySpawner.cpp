@@ -63,8 +63,12 @@ void AEnemySpawner::SpawnEnemy()
 			AEnemyCharacter* NewEnemy = GetWorld()->SpawnActor <AEnemyCharacter>(NewLocation, FRotator::ZeroRotator, SpawnParams);
 	
 			NewEnemy->SpawnDefaultController();
+
+			//attach a tag to a enemy so you can see him on the radar
 			NewEnemy->Tags.Add(FName("Radar"));
-		
+
+			//ar trebui sa retinem inamicii intr-un vector sau ceva asemanator, deoarece ei dispar de pe radar imd ce se spawneaza un inamic nou
+
 		} 
 		
 	
