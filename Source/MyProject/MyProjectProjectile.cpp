@@ -9,14 +9,13 @@
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "Engine/StaticMesh.h"
 
+
 AMyProjectProjectile::AMyProjectProjectile() 
 {
 	// Static reference to the mesh to use for the projectile
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> ProjectileMeshAsset(TEXT("/Game/TwinStick/Meshes/TwinStickProjectile.TwinStickProjectile"));
 
-
-	
-	
+		
 	// Create mesh component for the projectile sphere
 	ProjectileMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ProjectileMesh0"));
 	ProjectileMesh->SetStaticMesh(ProjectileMeshAsset.Object);
@@ -24,6 +23,7 @@ AMyProjectProjectile::AMyProjectProjectile()
 	ProjectileMesh->BodyInstance.SetCollisionProfileName("Projectile");
 	ProjectileMesh->OnComponentHit.AddDynamic(this, &AMyProjectProjectile::OnHit); // set up a notification for when this component hits something
 	ProjectileMesh->RelativeScale3D;
+	
 	RootComponent = ProjectileMesh;
 
 	//Construct ParticleSystem to spawn on projectile hit
@@ -32,8 +32,14 @@ AMyProjectProjectile::AMyProjectProjectile()
 	PSC->SetTemplate(PS.Object);
 	PSC->ToggleActive();
 
+	static ConstructorHelpers::FObjectFinder<UMaterialInterface> Material(TEXT("Material'/Game/TwinStick/EnemyProjectileMaterial.EnemyProjectileMaterial'"));
+	EnemyProjectileMaterial = CreateDefaultSubobject<UMaterialInterface>(TEXT("EnemyProjectileMaterial0"));
+	EnemyProjectileMaterial = (UMaterialInterface*)Material.Object;
+	//ProjectileMesh->SetMaterial(0, AMyProjectProjectile::EnemyProjectileMaterial);
+	
 	
 
+	
 	// Use a ProjectileMovementComponent to govern this projectile's movement
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement0"));
 	ProjectileMovement->UpdatedComponent = ProjectileMesh;
@@ -59,4 +65,9 @@ void AMyProjectProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActo
 	Destroy();
 	
 
+}
+
+void AMyProjectProjectile::SetProjectileMaterial()
+{
+	ProjectileMesh->SetMaterial(0, AMyProjectProjectile::EnemyProjectileMaterial);
 }
