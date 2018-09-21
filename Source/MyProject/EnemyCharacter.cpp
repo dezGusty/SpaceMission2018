@@ -30,10 +30,17 @@ AEnemyCharacter::AEnemyCharacter()
 	EnemyMeshComponent->SetStaticMesh(EnemyMesh.Object);
 	EnemyMeshComponent->SetCollisionProfileName(UCollisionProfile::Pawn_ProfileName);
 	
-	EnemyMeshComponent->SetRelativeLocation(FVector(0.0f, 0.0f, 0.f));
-	EnemyMeshComponent->SetRelativeRotation(FRotator(0.f, 0.0f, 0.0f));
+	//EnemyMeshComponent->SetRelativeLocation(FVector(0.0f, 0.0f, 0.f));
+	//EnemyMeshComponent->SetRelativeRotation(FRotator(0.f, 0.0f, 0.0f));
 		
 	RootComponent = EnemyMeshComponent;
+	EnemyMovementComponent = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("EnemyMovement0"));
+	EnemyMovementComponent->UpdatedComponent = EnemyMeshComponent;
+	
+
+	
+
+
 
 	static ConstructorHelpers::FObjectFinder<USoundBase> FireAudio(TEXT("/Game/TwinStick/Audio/TwinStickFire.TwinStickFire"));
 	EnemyFireSound = FireAudio.Object;

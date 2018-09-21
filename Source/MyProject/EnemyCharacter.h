@@ -6,7 +6,11 @@
 #include "GameFramework/Character.h"
 #include "MyEnemyAIController.h"
 #include "MyProjectPawn.h"
+#include "GameFramework/FloatingPawnMovement.h"
 #include "EnemyCharacter.generated.h"
+
+
+class UFloatingPawnMovement;
 
 UCLASS(config=game)
 class MYPROJECT_API AEnemyCharacter : public ACharacter
@@ -14,6 +18,9 @@ class MYPROJECT_API AEnemyCharacter : public ACharacter
 	GENERATED_BODY()
 public:
 	AEnemyCharacter();
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
+	UFloatingPawnMovement* EnemyMovementComponent;
 
 	UPROPERTY(Category = Mesh, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* EnemyMeshComponent;

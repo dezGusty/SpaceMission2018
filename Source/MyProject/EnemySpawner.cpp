@@ -42,11 +42,11 @@ void AEnemySpawner::Tick(float DeltaSeconds)
 void AEnemySpawner::SpawnEnemy()
 
 {
-	UE_LOG(LogTemp, Warning, TEXT("EnemySpawner Spawn Enemy function"));
+	
 	TArray<AActor*> AllOutActors;
 	
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemyCharacter::StaticClass(), AllOutActors);
-	UE_LOG(LogTemp, Warning, TEXT("Spawning Now!"));
+	
 
 	
 	if (AllOutActors.Num() < this->MaxEnemies)
@@ -66,7 +66,18 @@ void AEnemySpawner::SpawnEnemy()
 		NewEnemy->SpawnDefaultController();
 		
 		NewEnemy->FireBullet();
-		
+		UCharacterMovementComponent* EMC = NewEnemy->GetCharacterMovement();
+		EMC->SetMovementMode(EMovementMode::MOVE_Flying);
+		EMC = NewEnemy->GetCharacterMovement();
+		EMC->AddInputVector(GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation());
+	if (EMC->IsFlying())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Is Flying"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("NOT Flying"));
+	}
 	}
 		
 	
