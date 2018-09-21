@@ -18,6 +18,10 @@ class MYPROJECT_API AMyPlayerController : public APlayerController
 	
 public:
 	AMyPlayerController();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets") TSubclassOf<class UUserWidget> wTwinStickHUD;
+	UUserWidget* myWidget;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

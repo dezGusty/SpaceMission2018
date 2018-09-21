@@ -13,6 +13,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Sound/SoundBase.h"
+#include "Components/WidgetComponent.h"
+#include "UObject/ConstructorHelpers.h"
 #include "iostream"
 
 
@@ -39,6 +41,20 @@ AMyProjectPawn::AMyProjectPawn()
 	// Cache our sound effect
 	static ConstructorHelpers::FObjectFinder<USoundBase> FireAudio(TEXT("/Game/TwinStick/Audio/TwinStickFire.TwinStickFire"));
 	FireSound = FireAudio.Object;
+
+	/*//create the widget
+	static ConstructorHelpers::FClassFinder<UUserWidget>
+	PopupWidgetObj(TEXT("Game/TwinStick/BluePrnts/TwinStickHUD.TwinStickHUD"));
+
+	myWidget = CreateDefaultSubobject<UWidgetComponent>("PopupWidget");
+	if (PopupWidgetObj.Succeeded())
+	{
+		myWidget->SetWidgetClass(PopupWidgetObj.Class);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Not initialize popup"));
+	}*/
 
 	// Create a camera boom...
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
@@ -202,5 +218,7 @@ void AMyProjectPawn::BeginPlay()
 		PC->bEnableMouseOverEvents = true;
 		PC->CurrentMouseCursor = EMouseCursor::Crosshairs;
 	}
+
+	
 
 }
