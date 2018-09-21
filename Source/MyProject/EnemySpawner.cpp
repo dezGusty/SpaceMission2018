@@ -63,6 +63,7 @@ void AEnemySpawner::SpawnEnemy()
 			AEnemyCharacter* NewEnemy = GetWorld()->SpawnActor <AEnemyCharacter>(NewLocation, FRotator::ZeroRotator, SpawnParams);
 	
 			NewEnemy->SpawnDefaultController();
+			NewEnemy->Tags.Add(FName("Radar"));
 		
 		} 
 		
