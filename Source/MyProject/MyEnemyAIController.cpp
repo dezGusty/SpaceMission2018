@@ -25,10 +25,12 @@ void AMyEnemyAIController::TrackPlayer()
 {
 	APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	if (PC) {
-		this->MoveToActor(PC->GetPawn(), 5);
+		this->MoveToActor(PC->GetPawn(), 5,false);
+		UE_LOG(LogTemp, Warning, TEXT("Ai Controler trackplayer"));
+		
 	}
-	UE_LOG(LogTemp, Warning, TEXT("Ai Controler trackplayer"));
-}
+	}
+	
 
 
 

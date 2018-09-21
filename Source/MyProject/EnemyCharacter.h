@@ -25,7 +25,13 @@ public:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Enemy")
 	AMyProjectPawn * Hero;
 
-protected:
+	UPROPERTY(Category = Gameplay, EditAnywhere, BlueprintReadWrite)
+	float EnemyFireRate;
+
+	FTimerHandle MyEnemyTimerHandle;
+
+	UFUNCTION()
+	void FireBullet();
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
@@ -37,6 +43,10 @@ public:
 	//virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	FORCEINLINE class UStaticMeshComponent* GetEnemyMeshComponent() const { return EnemyMeshComponent; }
 
-	
+	UFUNCTION()
+	void CreateEnemyFireBullet();
+
+	UPROPERTY(Category = Audio, EditAnywhere, BlueprintReadWrite)
+	class USoundBase* EnemyFireSound;
 	
 };

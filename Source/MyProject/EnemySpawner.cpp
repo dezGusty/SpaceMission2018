@@ -2,6 +2,7 @@
 
 #include "EnemySpawner.h"
 #include "MyEnemyAIController.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 
 // Sets default values
@@ -48,23 +49,25 @@ void AEnemySpawner::SpawnEnemy()
 	UE_LOG(LogTemp, Warning, TEXT("Spawning Now!"));
 
 	
-		if (AllOutActors.Num() < this->MaxEnemies)
-		{
-			FVector NewLocation =
-				//GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation() +
-				UKismetMathLibrary::RandomPointInBoundingBox(this->SpawnVolume->GetComponentLocation(), this->SpawnVolume->GetScaledBoxExtent());
+	if (AllOutActors.Num() < this->MaxEnemies)
+	{
+		FVector NewLocation =
+			//GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation() +
+			UKismetMathLibrary::RandomPointInBoundingBox(this->SpawnVolume->GetComponentLocation(), this->SpawnVolume->GetScaledBoxExtent());
 
-			//FVector(100.f, 100.f, 0.f);
-			FActorSpawnParameters SpawnParams;
-			//SpawnParams.Name = "Ghita";
-			
-			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		//FVector(100.f, 100.f, 0.f);
+		FActorSpawnParameters SpawnParams;
+		//SpawnParams.Name = "Ghita";
 
-			AEnemyCharacter* NewEnemy = GetWorld()->SpawnActor <AEnemyCharacter>(NewLocation, FRotator::ZeroRotator, SpawnParams);
-	
-			NewEnemy->SpawnDefaultController();
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+		AEnemyCharacter* NewEnemy = GetWorld()->SpawnActor <AEnemyCharacter>(NewLocation, FRotator::ZeroRotator, SpawnParams);
+
+		NewEnemy->SpawnDefaultController();
 		
-		} 
+		NewEnemy->FireBullet();
+		
+	}
 		
 	
 }

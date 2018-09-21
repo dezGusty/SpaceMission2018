@@ -8,6 +8,8 @@
 
 class UProjectileMovementComponent;
 class UStaticMeshComponent;
+class UMaterialInterface;
+
 
 UCLASS(config=Game)
 class AMyProjectProjectile : public AActor
@@ -25,13 +27,18 @@ class AMyProjectProjectile : public AActor
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
 	UProjectileMovementComponent* ProjectileMovement;
 
+
+
 public:
 	AMyProjectProjectile();
 
-
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Projectile, meta = (AllowPrivateAccess = "true"))
+	UMaterialInterface* EnemyProjectileMaterial;
 	/** Function to handle the projectile hitting something */
 	UFUNCTION()
 	void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+	UFUNCTION()
+	void SetProjectileMaterial();
 
 	/** Returns ProjectileMesh subobject **/
 	FORCEINLINE UStaticMeshComponent* GetProjectileMesh() const { return ProjectileMesh; }
