@@ -123,7 +123,6 @@ void AMyHUD::PerformRadarRaycast()
 		CollisionShape.SetSphere(SphereRadius);
 
 		//Perform a the necessary sweep for actors.
-		//In case you're wondering how this works, read my raycast tutorial here: http://wp.me/p6hvtS-5F
 		GetWorld()->SweepMultiByChannel(HitResults, Player->GetActorLocation(), EndLocation, FQuat::Identity, ECollisionChannel::ECC_WorldDynamic, CollisionShape);
 
 		for (auto It : HitResults)

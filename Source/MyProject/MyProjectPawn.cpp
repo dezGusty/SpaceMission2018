@@ -1,21 +1,10 @@
 // Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
 
 #include "MyProjectPawn.h"
+#include "MyPlayerController.h"
 #include "MyProjectProjectile.h"
-#include "TimerManager.h"
-#include "UObject/ConstructorHelpers.h"
-#include "Camera/CameraComponent.h"
-#include "Components/StaticMeshComponent.h"
-#include "Components/InputComponent.h"
-#include "GameFramework/SpringArmComponent.h"
-#include "Engine/CollisionProfile.h"
-#include "Engine/StaticMesh.h"
-#include "Kismet/GameplayStatics.h"
-#include "Kismet/KismetMathLibrary.h"
-#include "Sound/SoundBase.h"
-#include "Components/WidgetComponent.h"
-#include "UObject/ConstructorHelpers.h"
-#include "iostream"
+#include "EnemyCharacter.h"
+
 
 
 //Movement
@@ -27,7 +16,7 @@ const FName AMyProjectPawn::FirePlayerBulletBinding("FirePlayerBullet");
 const FName AMyProjectPawn::StopFireBulletBinding("StopFireBullet");
 
 FHitResult Result;
-AMyPlayerController* PC = nullptr;
+APlayerController* PC;
 
 AMyProjectPawn::AMyProjectPawn()
 {	
@@ -41,20 +30,6 @@ AMyProjectPawn::AMyProjectPawn()
 	// Cache our sound effect
 	static ConstructorHelpers::FObjectFinder<USoundBase> FireAudio(TEXT("/Game/TwinStick/Audio/TwinStickFire.TwinStickFire"));
 	FireSound = FireAudio.Object;
-
-	/*//create the widget
-	static ConstructorHelpers::FClassFinder<UUserWidget>
-	PopupWidgetObj(TEXT("Game/TwinStick/BluePrnts/TwinStickHUD.TwinStickHUD"));
-
-	myWidget = CreateDefaultSubobject<UWidgetComponent>("PopupWidget");
-	if (PopupWidgetObj.Succeeded())
-	{
-		myWidget->SetWidgetClass(PopupWidgetObj.Class);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Not initialize popup"));
-	}*/
 
 	// Create a camera boom...
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
@@ -89,57 +64,68 @@ void AMyProjectPawn::SetupPlayerInputComponent(class UInputComponent* PlayerInpu
 
 void AMyProjectPawn::Tick(float DeltaSeconds)
 {
-	// Find movement direction
-	const float ForwardValue = GetInputAxisValue(MoveForwardBinding);
-	const float RightValue = GetInputAxisValue(MoveRightBinding);
-
-	// Clamp max size so that (X=1, Y=1) doesn't cause faster movement in diagonal directions
-	const FVector MoveDirection = FVector(ForwardValue, RightValue, 0.f).GetClampedToMaxSize(1.0f);
-
-	// Calculate  movement
-	const FVector Movement = MoveDirection * MoveSpeed * DeltaSeconds;
-
-	// If non-zero size, move this actor
-	if (Movement.SizeSquared() > 0.0f)
+	//PC = Cast<AMyPlayerController>(GetWorld()->GetFirstPlayerController());
+	if (PC != nullptr)
 	{
-		const FRotator NewRotation = Movement.Rotation();
-		FHitResult Hit(1.f);
-		RootComponent->MoveComponent(Movement, NewRotation, true, &Hit);
-		
-		if (Hit.IsValidBlockingHit())
+		// Find movement direction
+		const float ForwardValue = GetInputAxisValue(MoveForwardBinding);
+		const float RightValue = GetInputAxisValue(MoveRightBinding);
+
+		// Clamp max size so that (X=1, Y=1) doesn't cause faster movement in diagonal directions
+		const FVector MoveDirection = FVector(ForwardValue, RightValue, 0.f).GetClampedToMaxSize(1.0f);
+
+		// Calculate  movement
+		const FVector Movement = MoveDirection * MoveSpeed * DeltaSeconds;
+
+		// If non-zero size, move this actor
+		if (Movement.SizeSquared() > 0.0f)
 		{
-			const FVector Normal2D = Hit.Normal.GetSafeNormal2D();
-			const FVector Deflection = FVector::VectorPlaneProject(Movement, Normal2D) * (1.f - Hit.Time);
-			RootComponent->MoveComponent(Deflection, NewRotation, true);
+			const FRotator NewRotation = Movement.Rotation();
+			FHitResult Hit(1.f);
+			RootComponent->MoveComponent(Movement, NewRotation, true, &Hit);
+
+			if (Hit.IsValidBlockingHit())
+			{
+				const FVector Normal2D = Hit.Normal.GetSafeNormal2D();
+				const FVector Deflection = FVector::VectorPlaneProject(Movement, Normal2D) * (1.f - Hit.Time);
+				RootComponent->MoveComponent(Deflection, NewRotation, true);
+			}
 		}
+
+
+
+
+		if (PC->GetHitResultUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_Visibility), true, Result))
+			PC->GetPawn()->SetActorRotation(FRotator(0, UKismetMathLibrary::FindLookAtRotation(this->GetActorLocation(), Result.Location).Yaw, 0));
+		else
+			UE_LOG(LogTemp, Error, TEXT("Error Getting hit result"));
+
+
+		//if(PC->DeprojectMousePositionToWorld(WorldLocation, WorldDirection))
+		//PC->GetPawn()->SetActorRotation(FRotator(0, UKismetMathLibrary::FindLookAtRotation(this->GetActorLocation(), WorldLocation).Yaw, 0));
+		//else
+		//	UE_LOG(LogTemp, Error, TEXT("Error Getting hit result %s"), *FRotator(0, UKismetMathLibrary::FindLookAtRotation(this->GetActorLocation(), WorldLocation).Yaw, 0).ToString());
 	}
-	
-	
-
-	
-	if (PC->GetHitResultUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_Visibility), true, Result))
-		PC->GetPawn()->SetActorRotation(FRotator(0, UKismetMathLibrary::FindLookAtRotation(this->GetActorLocation(), Result.Location).Yaw, 0));
-	else
-		UE_LOG(LogTemp, Error, TEXT("Error Getting hit result") );
-
-			
-	//if(PC->DeprojectMousePositionToWorld(WorldLocation, WorldDirection))
-	//PC->GetPawn()->SetActorRotation(FRotator(0, UKismetMathLibrary::FindLookAtRotation(this->GetActorLocation(), WorldLocation).Yaw, 0));
-	//else
-	//	UE_LOG(LogTemp, Error, TEXT("Error Getting hit result %s"), *FRotator(0, UKismetMathLibrary::FindLookAtRotation(this->GetActorLocation(), WorldLocation).Yaw, 0).ToString());
-
-
-	
+	else 
+		UE_LOG(LogTemp, Error, TEXT("MyProjectPawn Tick PC is null"));
 }
+
+
 void AMyProjectPawn::StopFireBullet()
 {
 	GetWorldTimerManager().ClearTimer(MyTimerHandle);
 }
 
 
+
 //Spawn bullets
 void AMyProjectPawn::CreateFireBullet()
 {
+	if(PC==nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("PC is null ptr"));
+		return;
+	}
 	FVector PlayerLocation = PC->GetPawn()->GetActorLocation();
 	FRotator PlayerRotation = PC->GetPawn()->GetActorRotation();
 	FVector ProjectileScale = FVector(1.5f, 1.5f, 1.5f);
@@ -209,8 +195,10 @@ void AMyProjectPawn::FireBullet()
 
 void AMyProjectPawn::BeginPlay()
 {
+	UE_LOG(LogTemp, Warning, TEXT("MyProjectPawn BeginPlay"));
 	Super::BeginPlay();
-	PC = Cast<AMyPlayerController>(GetWorld()->GetFirstPlayerController());
+	
+	PC = GetWorld()->GetFirstPlayerController();
 	if (PC)
 	{
 		PC->bShowMouseCursor = true;
@@ -218,7 +206,5 @@ void AMyProjectPawn::BeginPlay()
 		PC->bEnableMouseOverEvents = true;
 		PC->CurrentMouseCursor = EMouseCursor::Crosshairs;
 	}
-
-	
 
 }
