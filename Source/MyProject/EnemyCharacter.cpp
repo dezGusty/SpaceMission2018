@@ -16,7 +16,8 @@
 
 
 // Sets default values
-AEnemyCharacter::AEnemyCharacter() 
+AEnemyCharacter::AEnemyCharacter()
+
 	
 
 { 
@@ -44,76 +45,79 @@ AEnemyCharacter::AEnemyCharacter()
 	
 	this->Score = 500;
 	this->isDead = false;
-	this->Health = 100;
+	this->Health = 20;
 	InitialLifeSpan = 0;
 	EnemyFireRate = 0.5f;
 
 }
 
 
-//Calculate health function(helper)
-void AEnemyCharacter::CalculateDead()
-{
-	if (this->Health <= 0)
-	{
-		isDead = true;
-	}
-	else {
-		isDead = false;
-	}
-}
+								////calculate health function(helper)
+								//void aenemycharacter::calculatedead()
+								//{
+								//if (this->health <= 0)
+								//{
+								//isdead = true;
+								//}
+								//else {
+								//isdead = false;
+								//}
+								//}
 
-//Calculate health
-void AEnemyCharacter::CalculateHealth(float Delta)
-{
-	this->Health += Delta;
-	UE_LOG(LogTemp, Warning, TEXT("Health is %f"), this->Health);
-	this->CalculateDead();
-}
+								////calculate health
+								//void aenemycharacter::calculatehealth(float delta)
+								//{
+								//this->health += delta;
+								//this->calculatedead();
+								//}
 
-#if WITH_EDITOR
-//Update heath logic after editing inside editor
-void AEnemyCharacter::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
-{
-	this->isDead = false;
-	this->Health = 100;
+								//void aenemycharacter::affecthealth_implementation(float delta)
+								//{
+								//	this->calculatehealth(delta);
 
-	Super::PostEditChangeProperty(PropertyChangedEvent);
-
-	this->CalculateDead();
-}
-#endif
-
-void AEnemyCharacter::AffectHealth_Implementation(float Delta)
-{
-	UE_LOG(LogTemp, Warning, TEXT("AffectHealth_Implementation %f"), Delta);
-
-	this->CalculateHealth(Delta);
-
-	if (this->isDead) {
+								//	if (this->isdead) {
 		
 
-		AMyProjectGameMode * GameMode = Cast<AMyProjectGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
-		GameMode->IncrementScore(Score);
+								//		amyprojectgamemode * gamemode = cast<amyprojectgamemode>(ugameplaystatics::getgamemode(getworld()));
+								//		gamemode->incrementscore(score);
 
-		this->DetachFromControllerPendingDestroy();
+								//		this->detachfromcontrollerpendingdestroy();
 
-		if (!GetWorldTimerManager().IsTimerActive(DeadAnimationTimerHandler)) {
-			GetWorldTimerManager().SetTimer(DeadAnimationTimerHandler, this, &AEnemyCharacter::DestroyEnemy, 3.0f, false);
-		}
-	}
-
-
-}
+								//		if (!getworldtimermanager().istimeractive(deadanimationtimerhandler)) {
+								//			getworldtimermanager().settimer(deadanimationtimerhandler, this, &aenemycharacter::destroyenemy, 0.5f, false);
+								//		}
+								//	}
 
 
+								//}
+
+								//void aenemycharacter::destroyenemy()
+								//{
+								//	destroy();
+								//}
 
 
 
-void AEnemyCharacter::DestroyEnemy()
-{
-	Destroy();
-}
+
+//#if WITH_EDITOR
+////Update heath logic after editing inside editor
+//void AEnemyCharacter::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+//{
+//	this->isDead = false;
+//	this->Health = 20;
+//
+//	Super::PostEditChangeProperty(PropertyChangedEvent);
+//
+//	this->CalculateDead();
+//}
+//#endif
+
+
+
+
+
+
+
 
 
 

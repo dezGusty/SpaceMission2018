@@ -9,6 +9,8 @@
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "Engine/StaticMesh.h"
 #include "EnemyCharacter.h"
+#include "MyProjectPawn.h"
+#include "MyDamage.h"
 
 
 AMyProjectProjectile::AMyProjectProjectile() 
@@ -64,20 +66,23 @@ void AMyProjectProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActo
 		
 
 	}
-	if (OtherActor->IsA(AEnemyCharacter::StaticClass()))
+	/*if (OtherActor->IsA(AEnemyCharacter::StaticClass()))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Hit a AEnemyCharacter"));
-		auto temp=Cast<AEnemyCharacter>(OtherActor);
-		UE_LOG(LogTemp, Warning, TEXT("CAST a AEnemyCharacter"));
-		temp->AffectHealth_Implementation(Damage);
-		UE_LOG(LogTemp, Warning, TEXT("CALL implementention"));
+		auto temp=Cast<AMyDamage>(OtherActor);
+		temp->AffectHealth_Implementation(Damage,true);
+	}*/
+	if (OtherActor->IsA(AMyProjectPawn::StaticClass()))
+	{
 		
-	
+		auto temp = Cast<AMyDamage>(OtherActor);
+		UE_LOG(LogTemp, Warning, TEXT("Health:  %f"),temp->Health); 
+	//	temp->AffectHealth_Implementation(Damage,false);
 	}
 
 
+
 	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), PSC->Template, FTransform( Hit.Location), true);
-	Destroy();
+	this->Destroy();
 	
 
 }

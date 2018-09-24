@@ -28,6 +28,13 @@ class AMyProjectPawn : public APawn
 
 public:
 
+	//Character health
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Character")
+	float Health = 100;
+
+	////Character dead status
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Character")
+	bool isDead = false;
 
 
 	/* The mesh component */

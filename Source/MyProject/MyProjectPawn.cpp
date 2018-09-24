@@ -48,6 +48,11 @@ AMyProjectPawn::AMyProjectPawn()
 	MoveSpeed = 1000.0f;
 	// Weapon
 	FireRate = 0.15f;
+	//Health
+	this->Health = 40.0f;
+	this->isDead = false;
+
+
 	
 }
 
