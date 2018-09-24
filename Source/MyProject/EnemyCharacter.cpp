@@ -1,8 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "EnemyCharacter.h"
-#include "MyEnemyAIController.h"
-#include "MyProjectPawn.h"
 #include "MyProject.h"
 #include "Components/InputComponent.h"
 #include "Components/StaticMeshComponent.h"
@@ -11,6 +9,10 @@
 #include "UObject/ConstructorHelpers.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "MyProjectProjectile.h"
+#include "MyEnemyAIController.h"
+#include "MyProjectGameMode.h"
+#include "kismet/KismetMathLibrary.h"
+
 
 
 // Sets default values
@@ -30,27 +32,90 @@ AEnemyCharacter::AEnemyCharacter()
 	EnemyMeshComponent->SetStaticMesh(EnemyMesh.Object);
 	EnemyMeshComponent->SetCollisionProfileName(UCollisionProfile::Pawn_ProfileName);
 	
-	//EnemyMeshComponent->SetRelativeLocation(FVector(0.0f, 0.0f, 0.f));
-	//EnemyMeshComponent->SetRelativeRotation(FRotator(0.f, 0.0f, 0.0f));
-		
-	RootComponent = EnemyMeshComponent;
-	EnemyMovementComponent = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("EnemyMovement0"));
-	EnemyMovementComponent->UpdatedComponent = EnemyMeshComponent;
-	
 
-	
-
-
+	this->EnemyMeshComponent->AttachTo(GetRootComponent()); //AttachTo deprat
+	this->EnemyMeshComponent->SetRelativeLocation(FVector(0.0f, 0.0f,0.f));
 
 	static ConstructorHelpers::FObjectFinder<USoundBase> FireAudio(TEXT("/Game/TwinStick/Audio/TwinStickFire.TwinStickFire"));
 	EnemyFireSound = FireAudio.Object;
 
 	this->AIControllerClass = AMyEnemyAIController::StaticClass();
 	this->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying);
+	
+	this->Score = 500;
+	this->isDead = false;
+	this->Health = 20;
 	InitialLifeSpan = 0;
 	EnemyFireRate = 0.5f;
 
 }
+
+
+//Calculate health function(helper)
+void AEnemyCharacter::CalculateDead()
+{
+	if (this->Health <= 0)
+	{
+		isDead = true;
+	}
+	else {
+		isDead = false;
+	}
+}
+
+//Calculate health
+void AEnemyCharacter::CalculateHealth(float Delta)
+{
+	this->Health += Delta;
+	this->CalculateDead();
+}
+
+#if WITH_EDITOR
+//Update heath logic after editing inside editor
+void AEnemyCharacter::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+{
+	this->isDead = false;
+	this->Health = 100;
+
+	Super::PostEditChangeProperty(PropertyChangedEvent);
+
+	this->CalculateDead();
+}
+#endif
+
+void AEnemyCharacter::AffectHealth_Implementation(float Delta)
+{
+
+	this->CalculateHealth(Delta);
+	if (this->isDead) {
+		
+
+		AMyProjectGameMode * GameMode = Cast<AMyProjectGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+		GameMode->IncrementScore(Score);
+
+		this->DetachFromControllerPendingDestroy();
+
+		if (!GetWorldTimerManager().IsTimerActive(DeadAnimationTimerHandler)) {
+			GetWorldTimerManager().SetTimer(DeadAnimationTimerHandler, this, &AEnemyCharacter::DestroyEnemy, 3.0f, false);
+		}
+	}
+
+	//UE_LOG(LogTemp, Warning, TEXT("TAKING DAMAGE %f"), this->Health);
+}
+
+
+
+
+
+void AEnemyCharacter::DestroyEnemy()
+{
+	Destroy();
+}
+
+
+
+
+
 
 void AEnemyCharacter::FireBullet()
 {
@@ -62,7 +127,7 @@ void AEnemyCharacter::CreateEnemyFireBullet()
 {
 	if (this->AIControllerClass == nullptr)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("PC is null ptr"));
+		
 		return;
 	}
 	FVector PlayerLocation = this->GetActorLocation();
@@ -73,13 +138,13 @@ void AEnemyCharacter::CreateEnemyFireBullet()
 	SpawnParams.Instigator = Instigator;
 
 	// Spawn projectile at an offset from this pawn
-	const FVector SpawnLocation = PlayerLocation + UKismetMathLibrary::GetForwardVector(PlayerRotation) *100.f;
+	const FVector SpawnLocation = PlayerLocation + UKismetMathLibrary::GetForwardVector(PlayerRotation) * 200.f;
 
 		
 	FTransform BulletTransfom = FTransform(PlayerRotation, SpawnLocation + UKismetMathLibrary::GetRightVector(PlayerRotation), ProjectileScale);
 	AMyProjectProjectile* EnemyProjectile = GetWorld()->SpawnActor<AMyProjectProjectile>(AMyProjectProjectile::StaticClass(), BulletTransfom, SpawnParams);
 	EnemyProjectile->SetProjectileMaterial();
-	PlayerRotation.Yaw += 2;
+
 	
 	// try and play the sound if specified
 	if (AEnemyCharacter::EnemyFireSound != nullptr)

@@ -11,9 +11,19 @@
 
 AMyHUD::AMyHUD()
 {
-	// Set the crosshair texture
-	static ConstructorHelpers::FObjectFinder<UTexture2D> CrosshairTexObj(TEXT("/Game/TwinStick/FirstPersonCrosshair"));
-	CrosshairTex = CrosshairTexObj.Object;
+	PrimaryActorTick.bCanEverTick = true;
+
+}
+
+void AMyHUD::Tick(float DeltaSeconds)
+{
+
+	Super::Tick(DeltaSeconds);
+	PerformRadarRaycast();
+
+	DrawRaycastedActors();
+
+
 }
 
 void AMyHUD::DrawHUD()
@@ -22,30 +32,19 @@ void AMyHUD::DrawHUD()
 
 	Super::DrawHUD();
 
-	// Draw very simple crosshair
 
 	// find center of the Canvas
 	const FVector2D Center(Canvas->ClipX * 0.5f, Canvas->ClipY * 0.5f);
 
-	// offset by half the texture's dimensions so that the center of the texture aligns with the center of the Canvas
-	const FVector2D CrosshairDrawPosition((Center.X),
-		(Center.Y));
-
-	// draw the crosshair
-	FCanvasTileItem TileItem(CrosshairDrawPosition, CrosshairTex->Resource,FLinearColor::White);
-	TileItem.BlendMode = SE_BLEND_Translucent;
-	Canvas->DrawItem(TileItem);
 	
 
+	
 	//----------------Radar logic----------------
 
 	DrawRadar();
 
 	DrawPlayerInRadar();
 
-	PerformRadarRaycast();
-
-	DrawRaycastedActors();
 
 	//Empty the radar actors in case the player moves out of range,
 	//by doing so, we have always a valid display in our radar

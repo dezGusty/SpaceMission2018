@@ -3,7 +3,7 @@
 #include "MyProjectPawn.h"
 #include "MyPlayerController.h"
 #include "MyProjectProjectile.h"
-#include "EnemyCharacter.h"
+//#include "EnemyCharacter.h"
 
 
 

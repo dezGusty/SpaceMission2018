@@ -8,6 +8,7 @@
 #include "Runtime/Engine/Classes/Particles/ParticleSystemComponent.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "Engine/StaticMesh.h"
+#include "EnemyCharacter.h"
 
 
 AMyProjectProjectile::AMyProjectProjectile() 
@@ -35,7 +36,7 @@ AMyProjectProjectile::AMyProjectProjectile()
 	static ConstructorHelpers::FObjectFinder<UMaterialInterface> Material(TEXT("Material'/Game/TwinStick/EnemyProjectileMaterial.EnemyProjectileMaterial'"));
 	EnemyProjectileMaterial = CreateDefaultSubobject<UMaterialInterface>(TEXT("EnemyProjectileMaterial0"));
 	EnemyProjectileMaterial = (UMaterialInterface*)Material.Object;
-	//ProjectileMesh->SetMaterial(0, AMyProjectProjectile::EnemyProjectileMaterial);
+	
 	
 	
 
@@ -51,6 +52,7 @@ AMyProjectProjectile::AMyProjectProjectile()
 
 	//Die after 3 seconds by default
 	InitialLifeSpan = 3.0f;
+	this->Damage = -20;
 }
 
 void AMyProjectProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
@@ -59,13 +61,26 @@ void AMyProjectProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActo
 	if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && OtherComp->IsSimulatingPhysics())
 	{
 		OtherComp->AddImpulseAtLocation(GetVelocity() * 20.0f, GetActorLocation());
+		
+
+	}
+	if (OtherActor->IsA(AEnemyCharacter::StaticClass()))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Hit a ProjectPawn"));
+		auto temp=Cast<AEnemyCharacter>(OtherActor);
+		temp->AffectHealth_Implementation(Damage);
+		
 	
 	}
+
+
 	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), PSC->Template, FTransform( Hit.Location), true);
 	Destroy();
 	
 
 }
+
+
 
 void AMyProjectProjectile::SetProjectileMaterial()
 {

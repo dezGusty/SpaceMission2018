@@ -6,15 +6,16 @@
 #include "GameFramework/Actor.h"
 #include "Runtime/Engine/Classes/Components/BoxComponent.h"
 #include "MyProject.h"
-#include "EnemyCharacter.h"
+
 #include "EnemySpawner.generated.h"
 
 
 
-UCLASS(Blueprintable)
+UCLASS()
 class MYPROJECT_API AEnemySpawner : public AActor
 {
-		GENERATED_BODY()
+	GENERATED_BODY()
+
 public:
 
 	AEnemySpawner();

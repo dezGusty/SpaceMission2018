@@ -6,9 +6,12 @@
 #include "MyProject.h"
 
 
-AMyEnemyAIController::AMyEnemyAIController()
+AMyEnemyAIController::AMyEnemyAIController()  //const class FPostConstructInitializeProperties& PCIP
+	//: Super(PCIP)
 {
+	/*BlackboardComp = PCIP.CreateDefaultSubobject<UBlackboardComponent>(this, TEXT("BlackBoardComp"));
 
+	BehaviorComp = PCIP.CreateDefaultSubobject<UBehaviorTreeComponent>(this, TEXT("BehaviorComp"));*/
 }
 
 
@@ -25,7 +28,7 @@ void AMyEnemyAIController::TrackPlayer()
 {
 	APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	if (PC) {
-		this->MoveToActor(PC->GetPawn(), 5,false);
+		this->MoveToActor(PC->GetPawn(), 20,false);
 		UE_LOG(LogTemp, Warning, TEXT("Ai Controler trackplayer"));
 		
 	}

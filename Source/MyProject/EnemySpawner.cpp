@@ -1,7 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "EnemySpawner.h"
+#include "EnemyCharacter.h"
 #include "MyEnemyAIController.h"
+#include "kismet/KismetMathLibrary.h"
 
 
 // Sets default values
@@ -51,19 +53,19 @@ void AEnemySpawner::SpawnEnemy()
 		if (AllOutActors.Num() < this->MaxEnemies)
 		{
 			FVector NewLocation =
-				//GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation() +
 				UKismetMathLibrary::RandomPointInBoundingBox(this->SpawnVolume->GetComponentLocation(), this->SpawnVolume->GetScaledBoxExtent());
 
-			//FVector(100.f, 100.f, 0.f);
+			
 			FActorSpawnParameters SpawnParams;
-			//SpawnParams.Name = "Ghita";
+			
 			
 			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
 			AEnemyCharacter* NewEnemy = GetWorld()->SpawnActor <AEnemyCharacter>(NewLocation, FRotator::ZeroRotator, SpawnParams);
 	
 			NewEnemy->SpawnDefaultController();
-			NewEnemy->Tags.Add(FName("Radar"));
+			NewEnemy->FireBullet();
+		//	NewEnemy->Tags.Add(FName("Radar"));
 		
 		} 
 		

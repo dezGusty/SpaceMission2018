@@ -16,10 +16,12 @@ class MYPROJECT_API AMyHUD : public AHUD
 	
 public:
 	AMyHUD();
+	void Tick(float DeltaSeconds) override;
+
 	void virtual DrawHUD() override;
 
 	/** Crosshair asset pointer */
-	class UTexture2D* CrosshairTex;
+	//class UTexture2D* CrosshairTex;
 
 protected:
 	/*The distance scale of the radar actors*/

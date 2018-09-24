@@ -4,6 +4,8 @@
 #include <MyProject.h>
 #include "MyProjectPawn.h"
 #include "EnemyCharacter.h"
+#include "MyPlayerController.h"
+#include "EnemySpawner.h"
 
 AMyProjectGameMode::AMyProjectGameMode()
 	
@@ -24,17 +26,16 @@ void AMyProjectGameMode::BeginPlay()
 
 	UE_LOG(LogTemp, Warning, TEXT("Begining play %d"), AllOutActors.Num());
 
-	
+	AEnemySpawner* Spawner = nullptr;
 
 	if (AllOutActors.Num() > 0) {
-	this->Spawner = Cast<AEnemySpawner>(AllOutActors[0]);
-	UE_LOG(LogTemp, Warning, TEXT(" Spawner Casted "));
+		Spawner = Cast<AEnemySpawner>(AllOutActors[0]);
 	}
-	UE_LOG(LogTemp, Warning, TEXT(" Before Spawner created "));
 
-	if ((this->Spawner)!=nullptr) {
 
-		UE_LOG(LogTemp, Warning, TEXT(" Spawner created "));
+	if ((Spawner)!=nullptr) {
+
+
 		float fRate = 1;
 		if (this->EnemiesPerSecond != 0) {
 			fRate = 1.0f / this->EnemiesPerSecond;
@@ -44,16 +45,35 @@ void AMyProjectGameMode::BeginPlay()
 
 		GetWorldTimerManager().SetTimer(
 			SpawnTimerHandler, 
-			this->Spawner, 
+			Spawner, 
 			&AEnemySpawner::SpawnEnemy, 
 			fRate,
 			true);
-		UE_LOG(LogTemp, Warning, TEXT(" Spawn Timer Fired"));
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT(" Spawner NOT created "));
-
-	}
 	
+	}
+
+	
+}
+
+void AMyProjectGameMode::RespawnPlayer()
+{
+	UWorld * World = GetWorld();
+
+	if (World) {
+		TArray<AActor *> AllOutActors;
+		UGameplayStatics::GetAllActorsOfClass(World, AEnemyCharacter::StaticClass(), AllOutActors);
+
+		for (AActor * EachActor : AllOutActors) {
+			EachActor->Destroy();
+		}
+
+		AMyProjectPawn * NewPlayerCharacter = World->SpawnActor<AMyProjectPawn>(this->PlayerSpawnTransform.GetLocation(), this->PlayerSpawnTransform.GetRotation().Rotator());
+		APlayerController * PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+		PlayerController->Possess(NewPlayerCharacter);
+	}
+}
+
+void AMyProjectGameMode::IncrementScore(int32 DeltaScore)
+{
+	this->Score += DeltaScore;
 }
