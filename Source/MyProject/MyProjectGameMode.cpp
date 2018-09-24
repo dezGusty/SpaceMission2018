@@ -7,6 +7,7 @@
 #include "MyPlayerController.h"
 #include "EnemySpawner.h"
 
+
 AMyProjectGameMode::AMyProjectGameMode()
 	
 {
@@ -67,9 +68,10 @@ void AMyProjectGameMode::RespawnPlayer()
 			EachActor->Destroy();
 		}
 
-		/*AMyProjectPawn * NewPlayerCharacter = World->SpawnActor<AMyProjectPawn>(this->PlayerSpawnTransform.GetLocation(), this->PlayerSpawnTransform.GetRotation().Rotator());
+		
+		AMyProjectPawn * NewPlayerCharacter = World->SpawnActor<AMyProjectPawn>(this->PlayerSpawnTransform.GetLocation(), this->PlayerSpawnTransform.GetRotation().Rotator());
 		APlayerController * PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-		PlayerController->Possess(NewPlayerCharacter);*/
+		PlayerController->Possess(NewPlayerCharacter);
 	}
 }
 

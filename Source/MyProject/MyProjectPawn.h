@@ -26,16 +26,14 @@ class AMyProjectPawn : public APawn
 
 		AMyProjectPawn();
 
+
+
 public:
+	void AffectHealth_Implementation(float Delta);
 
 	//Character health
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Character")
 	float Health = 100;
-
-	////Character dead status
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Character")
-	bool isDead = false;
-
 
 	/* The mesh component */
 	UPROPERTY(Category = Mesh, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))

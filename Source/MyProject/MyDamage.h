@@ -3,13 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "MyProjectPawn.h"
 #include "MyDamage.generated.h"
 
 UCLASS()
 class MYPROJECT_API AMyDamage : public APawn
 {
 	GENERATED_BODY()
-	
 public:	
 	// Sets default values for this actor's properties
 	AMyDamage();

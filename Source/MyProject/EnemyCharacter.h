@@ -27,11 +27,11 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Enemy")
 	int32 Score;
 
-	//UFUNCTION()
-	//void AffectHealth_Implementation(float Delta);
+	UFUNCTION()
+	void AffectHealth_Implementation(float Delta);
 
-	//FTimerHandle DeadAnimationTimerHandler;
-	//void DestroyEnemy();
+	FTimerHandle DeadAnimationTimerHandler;
+	void DestroyEnemy();
 
 
 	UPROPERTY(Category = Gameplay, EditAnywhere, BlueprintReadWrite)
@@ -53,12 +53,13 @@ public:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Character")
 	bool isDead = false;
 
-	////Calculate health function(helper)
-	//virtual void CalculateDead();
-
-	//Calculate health
-	//UFUNCTION(BlueprintCallable, Category = "Base Character")
-	//virtual void CalculateHealth(float Delta);
+	UPROPERTY(VisibleAnywhere)
+	class UParticleSystemComponent* EPSC;
+	
+	void Calculatehealth();
+	UFUNCTION(BlueprintCallable, Category = "Base Character")
+	void CalculateDead();
+	virtual void CalculateHealth(float Delta);
 
 #if WITH_EDITOR
 	//Update heath logic after editing inside editor

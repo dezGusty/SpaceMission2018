@@ -66,17 +66,32 @@ void AMyProjectProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActo
 		
 
 	}
-	/*if (OtherActor->IsA(AEnemyCharacter::StaticClass()))
+	if (OtherActor->IsA(AEnemyCharacter::StaticClass()))
 	{
-		auto temp=Cast<AMyDamage>(OtherActor);
-		temp->AffectHealth_Implementation(Damage,true);
-	}*/
+
+		auto temp=Cast<AEnemyCharacter>(OtherActor);
+		if (temp != nullptr)
+		{
+			temp->AffectHealth_Implementation(Damage);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("nullptr"));
+		}
+	}
 	if (OtherActor->IsA(AMyProjectPawn::StaticClass()))
 	{
 		
-		auto temp = Cast<AMyDamage>(OtherActor);
-		UE_LOG(LogTemp, Warning, TEXT("Health:  %f"),temp->Health); 
-	//	temp->AffectHealth_Implementation(Damage,false);
+		auto temp = Cast<AMyProjectPawn>(OtherActor);
+		if (temp != nullptr)
+		{
+			temp->AffectHealth_Implementation(Damage);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("nullptr"));
+		}
+
 	}
 
 

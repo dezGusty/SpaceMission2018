@@ -12,6 +12,7 @@
 #include "MyEnemyAIController.h"
 #include "MyProjectGameMode.h"
 #include "kismet/KismetMathLibrary.h"
+#include "Runtime/Engine/Classes/Particles/ParticleSystemComponent.h"
 
 
 
@@ -42,6 +43,11 @@ AEnemyCharacter::AEnemyCharacter()
 
 	this->AIControllerClass = AMyEnemyAIController::StaticClass();
 	this->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying);
+
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> PS(TEXT("ParticleSystem'/Game/TwinStick/MyExplosion.MyExplosion'"));
+	EPSC = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("MyEPSC"));
+	EPSC->SetTemplate(PS.Object);
+	EPSC->ToggleActive();
 	
 	this->Score = 500;
 	this->isDead = false;
@@ -52,49 +58,53 @@ AEnemyCharacter::AEnemyCharacter()
 }
 
 
-								////calculate health function(helper)
-								//void aenemycharacter::calculatedead()
-								//{
-								//if (this->health <= 0)
-								//{
-								//isdead = true;
-								//}
-								//else {
-								//isdead = false;
-								//}
-								//}
 
-								////calculate health
-								//void aenemycharacter::calculatehealth(float delta)
-								//{
-								//this->health += delta;
-								//this->calculatedead();
-								//}
 
-								//void aenemycharacter::affecthealth_implementation(float delta)
-								//{
-								//	this->calculatehealth(delta);
 
-								//	if (this->isdead) {
+								//calculate health function(helper)
+								void AEnemyCharacter::CalculateDead()
+								{
+								if (this->Health <= 0)
+								{
+								isDead = true;
+								}
+								else {
+								isDead = false;
+								}
+								}
+
+								//calculate health
+								void AEnemyCharacter::CalculateHealth(float Delta)
+								{
+								this->Health += Delta;
+								this->CalculateDead();
+								}
+
+								void AEnemyCharacter::AffectHealth_Implementation(float Delta)
+								{
+									this->CalculateHealth(Delta);
+
+									if (this->isDead) {
 		
+										AMyProjectGameMode* GameMode = Cast<AMyProjectGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+									
+										GameMode->IncrementScore(Score);
 
-								//		amyprojectgamemode * gamemode = cast<amyprojectgamemode>(ugameplaystatics::getgamemode(getworld()));
-								//		gamemode->incrementscore(score);
+										this->DetachFromControllerPendingDestroy();
 
-								//		this->detachfromcontrollerpendingdestroy();
-
-								//		if (!getworldtimermanager().istimeractive(deadanimationtimerhandler)) {
-								//			getworldtimermanager().settimer(deadanimationtimerhandler, this, &aenemycharacter::destroyenemy, 0.5f, false);
-								//		}
-								//	}
+										if (!GetWorldTimerManager().IsTimerActive(DeadAnimationTimerHandler)){
+											GetWorldTimerManager().SetTimer(DeadAnimationTimerHandler, this, &AEnemyCharacter::DestroyEnemy, 0.5f, false);
+											UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), EPSC->Template,FTransform( this->GetActorLocation()), true);
+										}
+									}
 
 
-								//}
+								}
 
-								//void aenemycharacter::destroyenemy()
-								//{
-								//	destroy();
-								//}
+								void AEnemyCharacter::DestroyEnemy()
+								{
+									Destroy();
+								}
 
 
 

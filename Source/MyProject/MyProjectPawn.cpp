@@ -3,7 +3,9 @@
 #include "MyProjectPawn.h"
 #include "MyPlayerController.h"
 #include "MyProjectProjectile.h"
-//#include "EnemyCharacter.h"
+#include "MyProjectGameMode.h"
+#include "Kismet/GameplayStatics.h"
+
 
 
 
@@ -49,12 +51,27 @@ AMyProjectPawn::AMyProjectPawn()
 	// Weapon
 	FireRate = 0.15f;
 	//Health
-	this->Health = 40.0f;
-	this->isDead = false;
+	this->Health = 100.0f;
+
 
 
 	
 }
+
+void AMyProjectPawn::AffectHealth_Implementation(float Delta)
+{
+	this->Health += Delta;
+	
+	if (this->Health <= 0)
+	{
+		AMyProjectGameMode* GameMode = Cast<AMyProjectGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+		GameMode->RespawnPlayer();
+		
+	}
+
+
+}
+
 
 void AMyProjectPawn::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
