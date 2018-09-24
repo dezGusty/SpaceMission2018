@@ -19,7 +19,7 @@ AEnemySpawner::AEnemySpawner()
 	RootComponent = this->SpawnVolume;
 	
 
-	this->MaxEnemies = 10;
+	this->MaxEnemies = 1;
 
 }
 

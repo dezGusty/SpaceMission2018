@@ -44,7 +44,7 @@ AEnemyCharacter::AEnemyCharacter()
 	
 	this->Score = 500;
 	this->isDead = false;
-	this->Health = 20;
+	this->Health = 100;
 	InitialLifeSpan = 0;
 	EnemyFireRate = 0.5f;
 
@@ -67,6 +67,7 @@ void AEnemyCharacter::CalculateDead()
 void AEnemyCharacter::CalculateHealth(float Delta)
 {
 	this->Health += Delta;
+	UE_LOG(LogTemp, Warning, TEXT("Health is %f"), this->Health);
 	this->CalculateDead();
 }
 
@@ -85,8 +86,10 @@ void AEnemyCharacter::PostEditChangeProperty(FPropertyChangedEvent& PropertyChan
 
 void AEnemyCharacter::AffectHealth_Implementation(float Delta)
 {
+	UE_LOG(LogTemp, Warning, TEXT("AffectHealth_Implementation %f"), Delta);
 
 	this->CalculateHealth(Delta);
+
 	if (this->isDead) {
 		
 
@@ -100,7 +103,7 @@ void AEnemyCharacter::AffectHealth_Implementation(float Delta)
 		}
 	}
 
-	//UE_LOG(LogTemp, Warning, TEXT("TAKING DAMAGE %f"), this->Health);
+
 }
 
 

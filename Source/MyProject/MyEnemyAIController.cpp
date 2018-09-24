@@ -6,12 +6,10 @@
 #include "MyProject.h"
 
 
-AMyEnemyAIController::AMyEnemyAIController()  //const class FPostConstructInitializeProperties& PCIP
-	//: Super(PCIP)
-{
-	/*BlackboardComp = PCIP.CreateDefaultSubobject<UBlackboardComponent>(this, TEXT("BlackBoardComp"));
+AMyEnemyAIController::AMyEnemyAIController()  
 
-	BehaviorComp = PCIP.CreateDefaultSubobject<UBehaviorTreeComponent>(this, TEXT("BehaviorComp"));*/
+{
+	
 }
 
 

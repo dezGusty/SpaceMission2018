@@ -52,7 +52,7 @@ AMyProjectProjectile::AMyProjectProjectile()
 
 	//Die after 3 seconds by default
 	InitialLifeSpan = 3.0f;
-	this->Damage = -20;
+	this->Damage = -20.0f;
 }
 
 void AMyProjectProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
@@ -66,9 +66,11 @@ void AMyProjectProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActo
 	}
 	if (OtherActor->IsA(AEnemyCharacter::StaticClass()))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Hit a ProjectPawn"));
+		UE_LOG(LogTemp, Warning, TEXT("Hit a AEnemyCharacter"));
 		auto temp=Cast<AEnemyCharacter>(OtherActor);
+		UE_LOG(LogTemp, Warning, TEXT("CAST a AEnemyCharacter"));
 		temp->AffectHealth_Implementation(Damage);
+		UE_LOG(LogTemp, Warning, TEXT("CALL implementention"));
 		
 	
 	}
