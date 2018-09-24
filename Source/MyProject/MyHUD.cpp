@@ -11,20 +11,11 @@
 
 AMyHUD::AMyHUD()
 {
-	PrimaryActorTick.bCanEverTick = true;
+	
 
 }
 
-void AMyHUD::Tick(float DeltaSeconds)
-{
 
-	Super::Tick(DeltaSeconds);
-	PerformRadarRaycast();
-
-	DrawRaycastedActors();
-
-
-}
 
 void AMyHUD::DrawHUD()
 {
@@ -45,7 +36,8 @@ void AMyHUD::DrawHUD()
 
 	DrawPlayerInRadar();
 
-
+	PerformRadarRaycast();
+	DrawRaycastedActors();
 	//Empty the radar actors in case the player moves out of range,
 	//by doing so, we have always a valid display in our radar
 	RadarActors.Empty();

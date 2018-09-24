@@ -16,7 +16,6 @@ class MYPROJECT_API AMyHUD : public AHUD
 	
 public:
 	AMyHUD();
-	void Tick(float DeltaSeconds) override;
 
 	void virtual DrawHUD() override;
 
