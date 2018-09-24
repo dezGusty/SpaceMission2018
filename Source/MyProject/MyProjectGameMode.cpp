@@ -68,7 +68,7 @@ void AMyProjectGameMode::RespawnPlayer()
 			EachActor->Destroy();
 		}
 
-		
+		UGameplayStatics::OpenLevel(GetWorld(), "MainMenu");
 		AMyProjectPawn * NewPlayerCharacter = World->SpawnActor<AMyProjectPawn>(this->PlayerSpawnTransform.GetLocation(), this->PlayerSpawnTransform.GetRotation().Rotator());
 		APlayerController * PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 		PlayerController->Possess(NewPlayerCharacter);

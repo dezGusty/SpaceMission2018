@@ -65,7 +65,7 @@ void AEnemySpawner::SpawnEnemy()
 	
 			NewEnemy->SpawnDefaultController();
 			NewEnemy->FireBullet();
-		//	NewEnemy->Tags.Add(FName("Radar"));
+			NewEnemy->Tags.Add(FName("Radar"));
 		
 		} 
 		

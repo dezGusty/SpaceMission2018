@@ -10,7 +10,7 @@
 #include "Engine/StaticMesh.h"
 #include "EnemyCharacter.h"
 #include "MyProjectPawn.h"
-#include "MyDamage.h"
+
 
 
 AMyProjectProjectile::AMyProjectProjectile() 
